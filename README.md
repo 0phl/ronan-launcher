@@ -1,8 +1,30 @@
-# Ronan Launcher
+<p align="center">
+  <img src="src-tauri/icons/app-icon.png" width="112" alt="Ronan Launcher icon">
+</p>
+
+<h1 align="center">Ronan Launcher</h1>
+
+<p align="center">
+  Your SSH servers, shell snippets and runbook notes, one shortcut away.<br>
+  <a href="https://github.com/0phl/ronan-launcher/releases/latest"><b>Download for Windows</b></a>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/hero.png" alt="The Ronan Launcher library window with the launcher popup searching for an SSH server">
+</p>
 
 A Windows tray app that keeps your SSH connections, snippets and runbook notes one shortcut away.
 Press **Ctrl+Shift+Space** anywhere, type a few letters (`ronan`), press **Enter**, and the command
 is pasted into the window you were just in: Windows Terminal, PuTTY, Notepad, anything.
+
+## Install
+
+1. Download `RonanLauncher-<version>-x64-setup.exe` from the [latest release](https://github.com/0phl/ronan-launcher/releases/latest).
+2. Run it. It installs just for your user, so there's no admin prompt.
+3. Windows SmartScreen may say it "protected your PC", because the installer isn't code-signed yet. Click **More info → Run anyway**.
+4. Press **Ctrl+Shift+Space** to open the launcher. The library window opens from the tray icon.
+
+Requires 64-bit Windows 10 or 11. WebView2 is already part of Windows 11; on Windows 10 the installer downloads it if needed.
 
 ## Features
 
@@ -26,6 +48,20 @@ is pasted into the window you were just in: Windows Terminal, PuTTY, Notepad, an
 | `Ctrl+E` | Edit in the library |
 | `Ctrl+N` | New item |
 | `Esc` | Close |
+
+## Screenshots
+
+**Find one command inside a runbook.** Search matches the commands inside your notes, and Enter pastes the selected one.
+
+![The launcher finding the "clear cache" command inside a Moodle runbook note](docs/screenshots/launcher.png)
+
+**Runbook notes.** Headings, text and command blocks, each with Copy and Paste-to-terminal buttons.
+
+![A runbook note with command blocks in the library window](docs/screenshots/notes.png)
+
+**Light mode.** Follows Windows, or pick Light or Dark in Settings.
+
+![The library window in light mode showing an SSH server](docs/screenshots/library-light.png)
 
 ## Development
 
