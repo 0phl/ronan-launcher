@@ -36,7 +36,7 @@ const items: Item[] = [
     kind: "note",
     title: "Clear moodle temp/cache files",
     content:
-      "## Check location\n\n```shell\ngrep 'dataroot' config.php\n```\n\n## Clean temp files\n\n```shell\nrm -rf /moodledata/temp/*\n```\n\n```shell\nrm -rf /moodledata/cache/*\n```",
+      "## Check your moodledata location\n\n```shell\ngrep 'dataroot' /lms/moodle/config.php\n```\n\n## Clean temp files\n\n```shell\nrm -rf /moodledata/temp/*\n```\n\n```shell\nrm -rf /moodledata/cache/*\n```",
   }),
 ];
 
@@ -55,6 +55,12 @@ describe("search", () => {
   it("finds a code block inside a note", () => {
     const top = search(index, entries, "moodle cache").find((e) => e.kind === "block");
     expect(top?.text).toBe("rm -rf /moodledata/cache/*");
+  });
+
+  it("matches blocks by their own code, not just their note's title", () => {
+    const blocks = search(index, entries, "moodle temp").filter((e) => e.kind === "block");
+    expect(blocks[0].text).toBe("rm -rf /moodledata/temp/*");
+    expect(search(index, entries, "dataroot")[0].text).toContain("grep 'dataroot'");
   });
 
   it("ranks a note above its own blocks when only the note title matches", () => {
@@ -82,7 +88,7 @@ describe("search", () => {
     const note = items[3];
     const blocks = blocksOf(entries, note.id);
     expect(blocks.map((b) => b.subtitle)).toEqual([
-      "Clear moodle temp/cache files › Check location",
+      "Clear moodle temp/cache files › Check your moodledata location",
       "Clear moodle temp/cache files › Clean temp files",
       "Clear moodle temp/cache files › Clean temp files",
     ]);

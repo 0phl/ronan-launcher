@@ -15,12 +15,15 @@ export interface Entry {
   text: string;
   title: string;
   subtitle: string;
-  // search fields ("name" is the item's own name; empty for blocks, whose title is their code)
+  // search fields. A block is found mainly by its own code; its note's title only weighs lightly
+  // ("parent"), so "moodle cache" prefers the cache block over its siblings.
   name: string;
   tags: string[];
   host: string;
   folder: string;
   heading: string;
+  parent: string;
+  code: string;
   body: string;
 }
 
@@ -33,7 +36,7 @@ export function buildEntries(items: Item[], folders: Folder[]): Entry[] {
   for (const item of items) {
     const folder = folderPath(folders, item.folderId).join(" / ");
     const host = [item.sshUser, item.sshHost].filter(Boolean).join("@");
-    const base = { item, tags: item.tags, host, folder, heading: "" };
+    const base = { item, tags: item.tags, host, folder, heading: "", parent: "" };
 
     if (item.kind === "note") {
       const blocks = extractCodeBlocks(item.content);
@@ -47,6 +50,7 @@ export function buildEntries(items: Item[], folders: Folder[]): Entry[] {
         subtitle: [folder, blocks.length ? `${blocks.length} command${blocks.length > 1 ? "s" : ""}` : ""]
           .filter(Boolean)
           .join(" · "),
+        code: "",
         body: plainText(item.content),
       });
       for (const block of blocks) {
@@ -60,7 +64,9 @@ export function buildEntries(items: Item[], folders: Folder[]): Entry[] {
           title: firstLine(block.code),
           subtitle: [item.title || "Untitled note", block.heading].filter(Boolean).join(" › "),
           heading: block.heading ?? "",
-          body: block.code,
+          parent: item.title,
+          code: block.code,
+          body: "",
         });
       }
     } else {
@@ -72,7 +78,8 @@ export function buildEntries(items: Item[], folders: Folder[]): Entry[] {
         text: item.content,
         title: item.title || (item.kind === "ssh" ? "Untitled server" : "Untitled snippet"),
         subtitle: item.kind === "ssh" ? host || folder : firstLine(item.content) || folder,
-        body: `${item.content}\n${item.notes}`,
+        code: item.content,
+        body: item.notes,
       });
     }
   }
@@ -83,10 +90,11 @@ const KEYS = [
   { name: "name", weight: 3 },
   { name: "tags", weight: 1.6 },
   { name: "host", weight: 1.6 },
-  { name: "heading", weight: 1.4 },
-  { name: "subtitle", weight: 1.2 },
-  { name: "folder", weight: 1 },
-  { name: "body", weight: 0.6 },
+  { name: "code", weight: 1.4 },
+  { name: "heading", weight: 1 },
+  { name: "folder", weight: 0.8 },
+  { name: "parent", weight: 0.5 },
+  { name: "body", weight: 0.5 },
 ];
 
 const OPTIONS: IFuseOptions<Entry> = {
