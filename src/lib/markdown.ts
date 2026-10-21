@@ -67,6 +67,20 @@ export function extractCodeBlocks(md: string): CodeBlock[] {
     .map(({ index, lang, code, heading }) => ({ index, lang, code, heading }));
 }
 
+/**
+ * Shortens a long command in the middle, keeping the command word(s) and the end of the path,
+ * which is usually what tells similar commands apart: "rm -rf …/moodledata/cache/*".
+ */
+export function shortenCommand(line: string, max = 34): string {
+  if (line.length <= max) return line;
+  const firstPath = line.search(/\s[~./]/);
+  const head = (firstPath > 0 ? line.slice(0, firstPath) : line.split(" ")[0]).slice(0, Math.floor(max / 2));
+  let tail = line.slice(line.length - (max - head.length - 2));
+  const slash = tail.indexOf("/");
+  if (slash > 0 && slash < tail.length - 4) tail = tail.slice(slash);
+  return `${head} …${tail}`;
+}
+
 /** Plain text (no fences/markers) for search indexing. */
 export function plainText(md: string): string {
   return parseBlocks(md)

@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, KeyRound, Search, Star } from "lucide-react"
 import { api } from "../lib/api";
 import { useLibrary, useSettings, useTauriEvent } from "../lib/hooks";
 import { blocksOf, buildEntries, createIndex, search, type Entry } from "../lib/search";
-import { parseBlocks } from "../lib/markdown";
+import { parseBlocks, shortenCommand } from "../lib/markdown";
 import { languageLabel } from "../lib/highlight";
 import { CodeView } from "../components/CodeView";
 import { TypeIcon, kindLabel } from "../components/TypeIcon";
@@ -250,7 +250,9 @@ function ResultRow({
         <TypeIcon kind={entry.kind} />
       </span>
       <div className="relative min-w-0 flex-1">
-        <div className={cx("truncate text-[13px] font-medium", mono && "font-mono text-[12px]")}>{entry.title}</div>
+        <div className={cx("truncate text-[13px] font-medium", mono && "font-mono text-[12px]")}>
+          {mono ? shortenCommand(entry.title, 30) : entry.title}
+        </div>
         {entry.subtitle && <div className="truncate text-[11.5px] text-muted">{entry.subtitle}</div>}
       </div>
       <span className="relative flex items-center gap-1">

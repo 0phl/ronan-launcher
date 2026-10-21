@@ -1,5 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { extractCodeBlocks, parseBlocks } from "./markdown";
+import { extractCodeBlocks, parseBlocks, shortenCommand } from "./markdown";
+
+describe("shortenCommand", () => {
+  it("keeps the command and the distinguishing end of the path", () => {
+    const cache = shortenCommand("rm -rf /data/content/lms/moodledata/cache/*");
+    expect(cache).toMatch(/^rm -rf …\/.*moodledata\/cache\/\*$/);
+    expect(cache.length).toBeLessThanOrEqual(34);
+    expect(shortenCommand("rm -rf /data/content/lms/moodledata/data/trashdir/*")).toBe("rm -rf …/data/trashdir/*");
+  });
+
+  it("leaves short commands alone and never exceeds the limit", () => {
+    expect(shortenCommand("df -h")).toBe("df -h");
+    const long = "grep 'dataroot' /data/content/lms/moodle/config.php";
+    expect(shortenCommand(long).length).toBeLessThanOrEqual(34);
+    expect(shortenCommand(long).startsWith("grep 'dataroot' …")).toBe(true);
+  });
+});
 
 const NOTE = `## Check your moodledata location
 
