@@ -42,3 +42,7 @@ npm run tauri build    # installer in src-tauri/target/release/bundle/nsis/
 Layout: `src/popup` (launcher), `src/manager` (library window), `src/lib` (search, markdown, API),
 `src-tauri/src` (`db.rs` storage, `export.rs` encryption, `focus.rs` + `paste.rs` auto-paste,
 `hotkey.rs`, `windows.rs`, `commands.rs`).
+
+## License
+
+[MIT](LICENSE) © 2026 Ronan
